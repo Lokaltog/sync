@@ -1,12 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 # Script to automatically create dotfile symlinks
 
-FROM="`dirname \`which $0\``"
+FROM=$(cd "$(dirname "$0")"; pwd)
 
 if [[ -d "$1" ]]; then
 	TO="$1"
 else
-	TO="$PWD"
+	TO="$HOME"
 fi
 
 cd $FROM
@@ -14,7 +14,7 @@ cd $FROM
 for FILE in `find -L . -maxdepth 1 -wholename './.*' -printf '%P\n'`; do
 	TO_FILE="$TO/$FILE"
 
-	if [[ -e $TO_FILE ]] || [[ -h $TO_$FILE ]]; then
+	if [[ -e $TO_FILE ]] || [[ -h $TO_FILE ]]; then
 		read -p "File $TO_FILE exists, overwrite? [Y/n] " -n 1 -r
 
 		if [[ $REPLY =~ ^[Nn]$ ]]; then
@@ -25,7 +25,7 @@ for FILE in `find -L . -maxdepth 1 -wholename './.*' -printf '%P\n'`; do
 			continue
 		fi
 
-		rm $TO_FILE
+		rm -rf $TO_FILE
 	fi
 
 	echo "Creating symlink to $FILE"
